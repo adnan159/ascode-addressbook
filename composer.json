@@ -1,0 +1,17 @@
+{
+    "name": "adnan/ascode-addressbook",
+    "description": "This is test plugin for addressbook",
+    "license": "GPLv2",
+    "authors": [
+        {
+            "name": "Adnan",
+            "email": "osmanhaider159@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "AsCode\\Addressbook\\": "includes/"
+        }
+    }
+}
