@@ -56,8 +56,29 @@ class Address_List extends \WP_List_Table {
 	}
 
 	public function column_name( $item ) {
+		$actions = [];
+
+		$actions['edit'] = sprintf( 
+			'<a href="%s" title="%s"> %s </a>', 
+			admin_url('admin.php?page=ascode-addressbook-home&action=edit&id=' . $item->id ), 
+			$item->id, 
+			__( 'Edit', 'asscode-addressbook' ), 
+			__( 'Edit', 'asscode-addressbook' ) 
+		);
+
+		$actions['delete'] = sprintf( 
+			'<a href="%s" class="submitdelete" onclick="return confirm(\'Are you sure?\');" title="%s"> %s </a>',
+			wp_nonce_url( admin_url('admin-post.php?page=ascode-addressbook-home&action=edit&id=' . $item->id ) ), 
+			$item->id, 
+			__( 'Edit', 'asscode-addressbook' ), 
+			__( 'Edit', 'asscode-addressbook' ) 
+		);
+
 		return sprintf(
-			'<a href="%1$s"><strong>%2$s</strong></a>', admin_url('admin.php?page=ascode-addressbook-home&action=view&id'.$item->id), $item->name
+			'<a href="%1$s"><strong>%2$s</strong></a> %3$s', 
+			admin_url('admin.php?page=ascode-addressbook-home&action=view&id'.$item->id), 
+			$item->name, 
+			$this->row_actions( $actions )
 		);
 	}
 

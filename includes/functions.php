@@ -86,3 +86,37 @@ function ascode_addresses_count() {
 
 	return (int) $wpdb->get_var( "SELECT count(id) FROM {$wpdb->prefix}ascode_addresses" );
 }
+
+/**
+ * Fetch single address from database
+ * 
+ * @param int $id
+ * 
+ * @return object
+*/
+
+function ascode_get_address( $id ) {
+	global $wpdb;
+
+	// return $wpdb->get_row(
+	// 	$wpdb->prepare( "SELECT * FROM {$wpdb->prefix}ascode_addresses" WHERE 'id' = "%d", $id ) 
+	// );
+}
+
+/**
+ * Delete single address
+ * 
+ * @param int $id
+ * 
+ * @return int|boolen  
+ */
+
+function ascode_delete_address( $id ) {
+	global $wpdb;
+
+	return $wpdb->delete(
+		$wpdb . "ascode_addresses",
+		[ 'id'	=> $id ],
+		[ '%d' ]
+	);
+}
