@@ -67,9 +67,9 @@ function ascode_get_addresses( $args = [] ) {
 	$items = $wpdb->get_results(
 		$wpdb->prepare(
 			"SELECT * FROM {$wpdb->prefix}ascode_addresses
-			ORDER BY %s %s
+			ORDER BY {$args['orderby']} {$args['order']}
 			LIMIT %d, %d", 
-			$args['orderby'], $args['order'], $args['offset'], $args['number']
+			$args['offset'], $args['number']
 		) );
 
 	return $items;

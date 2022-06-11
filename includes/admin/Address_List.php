@@ -29,6 +29,21 @@ class Address_List extends \WP_List_Table {
 		];
 	}
 
+	/**
+	 * Get sortable column
+	 *
+	 * @return array 
+	 */
+
+	public function get_sortable_columns() {
+		$sortable_columns = [
+			'name'			=> [ 'name', true ],
+			'created_at'	=> [ 'created_at', true ]
+		];
+
+		return $sortable_columns;
+	}
+
 	protected function column_default( $item, $column_name ) {
 
 		switch ( $column_name ) {
@@ -57,10 +72,22 @@ class Address_List extends \WP_List_Table {
 		$hidden = [];
 		$sortable = $this->get_sortable_columns();
 
-		$per_page = 20;
-
 		$this->_column_headers = [ $columns, $hidden, $sortable ];
-		$this->items = ascode_get_addresses();
+
+		$per_page 		= 2;
+		$current_page 	= $this->get_pagenum();
+		$offset 		= ( $current_page - 1 ) * $per_page;
+
+		if( isset( $_REQUEST['orderby'] ) && isset( $_REQUEST['order'] ) ){
+			$args['orderby'] = $_REQUEST['orderby'];
+			$args['order'] = $_REQUEST['order'];
+		}
+		
+		$this->items = ascode_get_addresses( [
+			'number' 	=> $per_page,
+			'offset'	=> $offset
+		] );
+
 
 		$this->set_pagination_args( [
 			'total_items'	=> ascode_addresses_count(),
