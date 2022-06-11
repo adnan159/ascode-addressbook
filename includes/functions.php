@@ -43,3 +43,46 @@ function ascode_insert_address( $args = [] ) {
 
 	return $wpdb->insert_id;
 }
+
+/**
+ * Fetch addresses
+ * 
+ * @param array $args
+ * 
+ * @return array 
+ */
+
+function ascode_get_addresses( $args = [] ) {
+	global $wpdb;
+
+	$defaults = [
+		'number'	=> 20,
+		'offset'	=> 0,
+		'orderby'	=> 'id',
+		'order'		=> 'ASC'
+	];
+
+	$args = wp_parse_args( $args, $defaults );
+
+	$items = $wpdb->get_results(
+		$wpdb->prepare(
+			"SELECT * FROM {$wpdb->prefix}ascode_addresses
+			ORDER BY %s %s
+			LIMIT %d, %d", 
+			$args['orderby'], $args['order'], $args['offset'], $args['number']
+		) );
+
+	return $items;
+}
+
+/**
+ * Get total number of addresses
+ *  
+ * @return int
+ */
+
+function ascode_addresses_count() {
+	global $wpdb;
+
+	return (int) $wpdb->get_var( "SELECT count(id) FROM {$wpdb->prefix}ascode_addresses" );
+}
