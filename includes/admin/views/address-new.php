@@ -27,7 +27,7 @@
 						<label for="contact"><?php _e( 'Contact', 'asscode-addressbook' ); ?></label>
 					</th>
 					<td>
-						<input type="number" name="contact" id="contact" class="regular-text">
+						<input type="text" name="contact" id="contact" class="regular-text">
 					</td>
 				</tr>
 			</tbody>			

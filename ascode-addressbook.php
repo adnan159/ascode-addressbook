@@ -35,6 +35,8 @@ final class Ascode_Addressbook {
         
         $this -> define_constants();
 
+        register_activation_hook( __FILE__, [$this, 'activate'] );
+
         add_action( 'plugins_loaded', [ $this, 'init_plugin' ] );
     }
 
@@ -53,6 +55,18 @@ final class Ascode_Addressbook {
         } else {
             new AsCode\Addressbook\Frontend();
         }
+    }
+
+    /**
+     * Do stuff upon plugin activation
+     * 
+     * @return void
+     */
+
+    public function activate() {
+        $installer = new AsCode\Addressbook\Installer();
+
+        $installer->run();
     }
 
 

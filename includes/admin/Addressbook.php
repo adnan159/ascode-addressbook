@@ -5,6 +5,8 @@ namespace AsCode\Addressbook\Admin;
 
 class Addressbook {
 
+	public $error = [];
+
 	public function plugin_page() {
 		$action = isset( $_GET[ 'action'] ) ? $_GET[ 'action' ] : 'list';
 
@@ -48,6 +50,36 @@ class Addressbook {
 			wp_die( 'Are you Cheating?' );
 		}
 
-		var_dump($_POST);
+		$name = isset( $_POST['name'] ) ? sanitize_text_field( $_POST['name'] ) : '';
+		$address = isset( $_POST['address'] ) ? sanitize_textarea_field( $_POST['address'] ) : '';
+		$contact = isset( $_POST['contact'] ) ? sanitize_text_field( $_POST['contact'] ) : '';
+
+		if( empty( $name ) ) {
+			$this->errors['name'] = __( 'Please provide a name', 'asscode-addressbook' );
+		}
+
+		if( empty( $address ) ) {
+			$this->errors['address'] = __( 'Please provide a address', 'asscode-addressbook' );
+		}
+
+		if( ! empty( $errors) ) {
+			return;
+		}
+
+		$insert_id = ascode_insert_address( [
+				'name' 		=> $name,
+				'address'	=> $address,
+				'phone'	=> $contact
+			] );
+
+		if( is_wp_error( $insert_id ) ) {
+			wp_die( $insert_id->get_error_message() );
+		}
+
+		$redirect_to = admin_url( 'admin.php?page=ascode-addressbook-home&inserted=true' );
+
+		wp_redirect( $redirect_to );
+
+		exit;
 	}
 }
