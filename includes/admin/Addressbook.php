@@ -9,6 +9,8 @@ class Addressbook {
 
 	public function plugin_page() {
 		$action = isset( $_GET[ 'action'] ) ? $_GET[ 'action' ] : 'list';
+		$id = isset( $_GET['id'] ) ? intval( $_GET['id'] ) : 0;
+
 
 		switch ( $action ) {
 			case 'new' : 
@@ -16,6 +18,7 @@ class Addressbook {
 				break;
 
 			case 'edit' : 
+				$address = ascode_get_address( $id );
 				$tamplate = __DIR__ . '/views/address-edit.php';
 				break;
 
@@ -50,6 +53,7 @@ class Addressbook {
 			wp_die( 'Are you Cheating?' );
 		}
 
+		$id = isset( $_POST['id'] ) ? intval( $_POST['id'] ) : 0;
 		$name = isset( $_POST['name'] ) ? sanitize_text_field( $_POST['name'] ) : '';
 		$address = isset( $_POST['address'] ) ? sanitize_textarea_field( $_POST['address'] ) : '';
 		$contact = isset( $_POST['contact'] ) ? sanitize_text_field( $_POST['contact'] ) : '';
@@ -66,17 +70,27 @@ class Addressbook {
 			return;
 		}
 
-		$insert_id = ascode_insert_address( [
+		$args = [
 				'name' 		=> $name,
 				'address'	=> $address,
 				'phone'	=> $contact
-			] );
+		];
+
+		if( $id ) {
+			$args['id'] = $id;
+		}
+
+		$insert_id = ascode_insert_address( $args );
 
 		if( is_wp_error( $insert_id ) ) {
 			wp_die( $insert_id->get_error_message() );
 		}
 
-		$redirect_to = admin_url( 'admin.php?page=ascode-addressbook-home&inserted=true' );
+		if( $id ) {
+			$redirect_to = admin_url( 'admin.php?page=ascode-addressbook-home&action=edit&address-updated=ture&id='. $id );
+		} else {
+			$redirect_to = admin_url( 'admin.php?page=ascode-addressbook-home&inserted=true' );
+		}	
 
 		wp_redirect( $redirect_to );
 

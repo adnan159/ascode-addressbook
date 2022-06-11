@@ -70,8 +70,8 @@ class Address_List extends \WP_List_Table {
 			'<a href="%s" class="submitdelete" onclick="return confirm(\'Are you sure?\');" title="%s"> %s </a>',
 			wp_nonce_url( admin_url('admin-post.php?page=ascode-addressbook-home&action=edit&id=' . $item->id ) ), 
 			$item->id, 
-			__( 'Edit', 'asscode-addressbook' ), 
-			__( 'Edit', 'asscode-addressbook' ) 
+			__( 'Delete', 'asscode-addressbook' ), 
+			__( 'Delete', 'asscode-addressbook' ) 
 		);
 
 		return sprintf(
