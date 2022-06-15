@@ -7,6 +7,11 @@ class Addressbook {
 
 	public $error = [];
 
+	/**
+	 * Plugin page handle
+	 *  
+	 * @return void
+	 */
 	public function plugin_page() {
 		$action = isset( $_GET[ 'action'] ) ? $_GET[ 'action' ] : 'list';
 		$id = isset( $_GET['id'] ) ? intval( $_GET['id'] ) : 0;
@@ -91,6 +96,35 @@ class Addressbook {
 		} else {
 			$redirect_to = admin_url( 'admin.php?page=ascode-addressbook-home&inserted=true' );
 		}	
+
+		wp_redirect( $redirect_to );
+
+		exit;
+	}
+
+	/**
+	 * Delete address
+	 *  
+	 * @return void
+	 */
+
+	public function delete_address() {
+
+		if( ! wp_verify_nonce( $_GET['_wpnonce'], 'ascode_delete_address' ) ){
+			wp_die( 'Are you Cheating?' );
+		}
+
+		if( ! current_user_can( 'manage_options') ) {
+			wp_die( 'Are you Cheating?' );
+		}
+
+		$id = isset( $_GET['id'] ) ? intval( $_GET['id'] ) : 0;
+
+		if( ascode_delete_address( $id ) ) {
+			$redirect_to = admin_url( 'admin.php?page=ascode-addressbook-home&deleted=true' );
+		} else {
+			$redirect_to = admin_url( 'admin.php?page=ascode-addressbook-home&deleted=false' );
+		}
 
 		wp_redirect( $redirect_to );
 

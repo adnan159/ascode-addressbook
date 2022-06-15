@@ -46,10 +46,17 @@ final class Ascode_Addressbook {
      */
     public function define_constants() {
         define( 'ASCODE_VERSION', self::version );
+        define( 'ASCODE_FILE', __FILE__ );
+        define( 'ASCODE_PATH', __DIR__ );
+        define( 'ASCODE_URL', plugins_url( '', ASCODE_FILE ) );
+        define( 'ASCODE_ASSETS', ASCODE_URL . '/assets' );
 
     }
 
     public function init_plugin() {
+
+        new AsCode\Addressbook\Assets();
+
         if( is_admin() ) {
             new AsCode\Addressbook\Admin();
         } else {

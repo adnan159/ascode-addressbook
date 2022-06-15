@@ -8,10 +8,12 @@ class Shortcode {
 
 	public function __construct() {
 
-		add_shortcode( 'shortcode', [ $this, 'shortcode_callback' ] );
+		add_shortcode( 'ascode-hello-shortcode', [ $this, 'shortcode_callback' ] );
 	}
 
 	public function shortcode_callback() {
-		return "Hello from Shortcode...............ho............";
+		wp_enqueue_style( 'ascode-style' );
+
+		return '<div class="ascode-shortcode" id="ascode-shortcode">Hello From Shortcode </div>';
 	}
 }
