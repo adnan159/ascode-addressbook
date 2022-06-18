@@ -40,6 +40,8 @@ class Menu {
 			'ascode-addressbook-settings', 
 			[ $this, 'addressbook_settings'], 
 		);
+
+		add_action( 'admin-head' . $hook, [$this, 'enqueue_assets'] );
 	}
 
 	public function ascode_addressbook() {
