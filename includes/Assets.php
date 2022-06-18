@@ -25,9 +25,15 @@ class Assets {
 
 	public function get_style() {
 		return [
+			
 			'ascode-style' => [
 				'src'		=> ASCODE_ASSETS . '/css/frontend.css',
 				'version'	=> filemtime( ASCODE_PATH . '/assets/css/frontend.css' )
+			],
+
+			'ascode-admin-css' => [
+				'src'		=> ASCODE_ASSETS . '/css/admin.css',
+				'version'	=> filemtime( ASCODE_PATH . '/assets/css/admin.css' )
 			]
 		];
 	}

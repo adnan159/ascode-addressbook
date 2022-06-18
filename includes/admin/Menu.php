@@ -15,7 +15,7 @@ class Menu {
 		$parent_slug = 'ascode-addressbook-home';
 		$capabilities = 'manage_options';
 
-		add_menu_page( 
+		$hook = add_menu_page( 
 			__( 'AsCode', 'asscode-addressbook' ), 
 			__( 'AsCode', 'asscode-addressbook' ), 
 			$capabilities, 
@@ -41,7 +41,7 @@ class Menu {
 			[ $this, 'addressbook_settings'], 
 		);
 
-		add_action( 'admin-head' . $hook, [$this, 'enqueue_assets'] );
+		add_action( 'admin_head-' . $hook, [$this, 'enqueue_assets'] );
 	}
 
 	public function ascode_addressbook() {
@@ -52,5 +52,9 @@ class Menu {
 	public function addressbook_settings() {
 		$settings = new Settings();
 		$settings->settings_page();
+	}
+
+	public function enqueue_assets() {
+		wp_enqueue_style( 'ascode-admin-css' );
 	}
 }
