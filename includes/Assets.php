@@ -19,13 +19,13 @@ class Assets {
 			'ascode-script' => [
 				'src'			=> ASCODE_ASSETS . '/js/frontend.js',
 				'version'		=> filemtime( ASCODE_PATH . '/assets/js/frontend.js' ),
-				'dependency'	=> ( 'jQuery' )
+				'dependency'	=> [ 'jquery' ]
 			],
 
 			'ascode-enquery-script' => [
 				'src'			=> ASCODE_ASSETS . '/js/enquery.js',
 				'version'		=> filemtime( ASCODE_PATH . '/assets/js/enquery.js' ),
-				'dependency'	=> ( 'jQuery' )
+				'dependency'	=> [ 'jquery' ]
 			]
 		];
 	}
@@ -68,5 +68,10 @@ class Assets {
 
 			wp_register_style( $handle, $style['src'], $dependency, $style['version'] );
 		}
+
+		wp_localize_script( 'ascode-enquery-script', 'AsCodeUrl', [
+			'ajaxurl'	=> admin_url( 'admin-ajax.php' ),
+			'error'		=> __( 'Something went wrong!', 'asscode-addressbook' ),
+		] );
 	}
 }

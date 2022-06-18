@@ -57,6 +57,10 @@ final class Ascode_Addressbook {
 
         new AsCode\Addressbook\Assets();
 
+        if( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+            new AsCode\Addressbook\Ajax();
+        }
+
         if( is_admin() ) {
             new AsCode\Addressbook\Admin();
         } else {

@@ -23,6 +23,7 @@
 		<div class="form-row	">
 			<?php wp_nonce_field( 'ascode-enquery-from-1' ); ?>
 
+			<input type="hidden" name="action" value="ascode_enquery">
 			<input type="submit" name="send_enquery" value="<?php _e('Send Enquery', 'asscode-addressbook' ); ?>">	
 		</div>
 		
