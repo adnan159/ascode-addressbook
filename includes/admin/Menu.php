@@ -55,6 +55,6 @@ class Menu {
 	}
 
 	public function enqueue_assets() {
-		wp_enqueue_style( 'ascode-admin-css' );
+		wp_enqueue_style( 'ascode-admin-style' );
 	}
 }

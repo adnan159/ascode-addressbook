@@ -15,10 +15,17 @@ class Assets {
 
 	public function get_script() {
 		return [
+
 			'ascode-script' => [
 				'src'			=> ASCODE_ASSETS . '/js/frontend.js',
 				'version'		=> filemtime( ASCODE_PATH . '/assets/js/frontend.js' ),
-				'dependency'	=> ('jQuery')
+				'dependency'	=> ( 'jQuery' )
+			],
+
+			'ascode-enquery-script' => [
+				'src'			=> ASCODE_ASSETS . '/js/enquery.js',
+				'version'		=> filemtime( ASCODE_PATH . '/assets/js/enquery.js' ),
+				'dependency'	=> ( 'jQuery' )
 			]
 		];
 	}
@@ -31,9 +38,14 @@ class Assets {
 				'version'	=> filemtime( ASCODE_PATH . '/assets/css/frontend.css' )
 			],
 
-			'ascode-admin-css' => [
+			'ascode-admin-style' => [
 				'src'		=> ASCODE_ASSETS . '/css/admin.css',
 				'version'	=> filemtime( ASCODE_PATH . '/assets/css/admin.css' )
+			],
+
+			'ascode-enquery-style' => [
+				'src'		=> ASCODE_ASSETS . '/css/enquery.css',
+				'version'	=> filemtime( ASCODE_PATH . '/assets/css/enquery.css' )
 			]
 		];
 	}
