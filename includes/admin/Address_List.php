@@ -14,7 +14,7 @@ class Address_List extends \WP_List_Table {
 	public function __construct() {
 		parent::__construct([
 			'singular'	=> 'contact',
-			'plural'	=> 'comments',
+			'plural'	=> 'contacts',
 			'ajax'		=> false
 		] );
 	}
@@ -67,10 +67,8 @@ class Address_List extends \WP_List_Table {
 		);
 
 		$actions['delete'] = sprintf( 
-			'<a href="%s" class="submitdelete" onclick="return confirm(\'Are you sure?\');" title="%s"> %s </a>',
-			wp_nonce_url( admin_url('admin-post.php?page=ascode-addressbook-home&action=ascode-delete-action&id=' . $item->id ) ), 
+			'<a href="#" class="submitdelete"  data-id="%s"> %s </a>',
 			$item->id, 
-			__( 'Delete', 'asscode-addressbook' ), 
 			__( 'Delete', 'asscode-addressbook' ) 
 		);
 

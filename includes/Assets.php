@@ -26,6 +26,12 @@ class Assets {
 				'src'			=> ASCODE_ASSETS . '/js/enquery.js',
 				'version'		=> filemtime( ASCODE_PATH . '/assets/js/enquery.js' ),
 				'dependency'	=> [ 'jquery' ]
+			],
+
+			'ascode-admin-script' => [
+				'src'			=> ASCODE_ASSETS . '/js/admin.js',
+				'version'		=> filemtime( ASCODE_PATH . '/assets/js/admin.js' ),
+				'dependency'	=> [ 'jquery', 'wp-util' ]
 			]
 		];
 	}
@@ -71,6 +77,12 @@ class Assets {
 
 		wp_localize_script( 'ascode-enquery-script', 'AsCodeUrl', [
 			'ajaxurl'	=> admin_url( 'admin-ajax.php' ),
+			'error'		=> __( 'Something went wrong!', 'asscode-addressbook' ),
+		] );
+
+		wp_localize_script( 'ascode-admin-script', 'AsCodeUrl', [
+			'nonce'		=> wp_create_nonce( 'ascode-admin-nonce' ),
+			'confirm'	=> __( 'Are you sure?', 'asscode-addressbook' ),
 			'error'		=> __( 'Something went wrong!', 'asscode-addressbook' ),
 		] );
 	}
