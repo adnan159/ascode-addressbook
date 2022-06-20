@@ -32,7 +32,7 @@ class Ajax {
         ] );
     }
 
-    public function delete_contact(){
+    public function delete_contact() {
 
         global $wpdb;
         $id = $_POST['id'];

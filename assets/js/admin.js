@@ -1,13 +1,13 @@
-;(function($){
+;(function( $ ){
 
-	$('table.wp-list-table.contacts').on('click', 'a.submitdelete', function(e){
+	$( 'table.wp-list-table.contacts' ).on( 'click', 'a.submitdelete', function( e ) {
 		e.preventDefault();
 
-		if( !confirm(AsCodeUrl.confirm) ) {
+		if( ! confirm( AsCodeUrl.confirm ) ) {
 			return;
 		}
 
-		var self = $(this),
+		var self = $( this ),
 			id = self.data('id');
 
 		wp.ajax.send( 'ascode-delete-contact', {
@@ -16,18 +16,18 @@
 				_wpnonce: AsCodeUrl.nonce
 			}
 		})
-		.done(function(response){
+		.done( function( response ) {
 
 			self.closest('tr')
 				.css('background-color', 'red' )
 				.hide( 400, function(){
-					$(this).remove();
+					$( this ).remove();
 				});
 
 		})
-		.fail(function(){
-			alert(AsCodeUrl.error);
+		.fail( function() {
+			alert( AsCodeUrl.error );
 		})
 	});
 
-})(jQuery);
+})( jQuery );

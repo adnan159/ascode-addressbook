@@ -34,7 +34,6 @@ class Address_List extends \WP_List_Table {
 	 *
 	 * @return array 
 	 */
-
 	public function get_sortable_columns() {
 		$sortable_columns = [
 			'name'			=> [ 'name', true ],
