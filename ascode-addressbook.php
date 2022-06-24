@@ -26,7 +26,6 @@ require_once __DIR__ . '/vendor/autoload.php';
  * The main class
  * 
  */
-
 final class Ascode_Addressbook {
 
     const version = '1.0.0';
@@ -66,6 +65,8 @@ final class Ascode_Addressbook {
         } else {
             new AsCode\Addressbook\Frontend();
         }
+
+        new AsCode\Addressbook\API();
     }
 
     /**
@@ -73,7 +74,6 @@ final class Ascode_Addressbook {
      * 
      * @return void
      */
-
     public function activate() {
         $installer = new AsCode\Addressbook\Installer();
 
