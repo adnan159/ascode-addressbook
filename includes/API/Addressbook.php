@@ -27,6 +27,12 @@ class Addressbook extends WP_REST_Controller {
 					'permission_callback'	=> [ $this, 'get_items_permissions_check' ],
 					'args'					=> $this->get_collection_params(),
 				],
+				[
+					'methods'				=> WP_REST_Server::CREATABLE,
+					'callback'				=> [ $this, 'create_item'],
+					'permission_callback'	=> [ $this, 'create_item_permissions_check' ],
+					'args'					=> $this->get_endpoint_args_for_item_schema( WP_REST_Server::CREATABLE ),
+				],
 				'schema' => [ $this, 'get_item_schema' ],
 			]
 		 );
@@ -90,6 +96,73 @@ class Addressbook extends WP_REST_Controller {
 		$response->header( 'X-WP-TotalPages', (int) $max_pages );
 
 		return $response;
+	}
+
+	/**
+	 * Checks if the the request has access to read contacts
+	 * 
+	 * @param \WP_REST_Request $request
+	 * 
+	 * @return WP_Error || boolean
+	 */
+	public function create_item_permissions_check( $request ) {
+		return $this->get_items_permissions_check( $request );
+	}
+
+	/**
+	 * Prepares one item for create or update operation.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * 
+	 * @return object|WP_Error The prepared item, or WP_Error object on failure.
+	 */
+	protected function prepare_item_for_database( $request ) {
+		$prepared = [];
+
+		if( isset( $request['name'] ) ) {
+			$prepared['name'] = $request['name'];
+		}
+
+		if( isset( $request['address'] ) ) {
+			$prepared['address'] = $request['address'];
+		}
+
+		if( isset( $request['phone'] ) ) {
+			$prepared['phone'] = $request['phone'];
+		}
+
+		return $prepared;
+	}
+
+	/**
+	 * Create items from the collection
+	 * 
+	 * @param \WP_REST_Request $request
+	 * 
+	 * @return WP_Error || WP_REST_Response 
+	 */
+	public function create_item( $request ) {
+		$contact = $this->prepare_item_for_database( $request );
+
+		if( is_wp_error( $contact ) ) {
+			return $contact;
+		}
+
+		$contact_id = ascode_insert_address( $contact );
+
+		if( is_wp_error( $contact_id ) ) {
+			$contact_id->add_data( ['data' => 400 ] );
+			return $contact_id;
+		}
+
+		$contact 	= ascode_get_address( $contact_id );
+		$response 	= $this->prepare_item_for_response( $contact, $response );
+
+
+		$response->set_status( 201 );
+		$response->header( 'Location', rest_url( sprintf( '%s/%s/%d', $this->namespace, $this->rest_base, $contact_id) ) );
+
+		return rest_ensure_response( $response );
 	}
 
 	/**
