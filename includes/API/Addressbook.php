@@ -56,7 +56,7 @@ class Addressbook extends WP_REST_Controller {
 	 */
 	public function get_items( $request ) {
 		
-		$args = [];
+		$args 	= [];
 		$params = $this->get_collection_params();
 
 		foreach( $params as $key => $value ) {
@@ -73,9 +73,86 @@ class Addressbook extends WP_REST_Controller {
 		unset( $args['page'] );
 		unset( $args['per_page'] );
 
-		$contacts = ascode_get_addresses( $args );
+		$data 		= [];
+		$contacts 	= ascode_get_addresses( $args );
 
-		return $contacts;
+		foreach( $contacts as $contact ) {
+			$response 	= $this->prepare_item_for_response( $contact, $request );
+			$data[]		= $this->prepare_response_for_collection( $response );			
+		}
+
+		$total 		= ascode_addresses_count();
+		$max_pages 	= ceil( $total / (int) $args['number'] );
+
+		$response = rest_ensure_response( $data );
+
+		$response->header( 'X-WP-Total', (int) $total );
+		$response->header( 'X-WP-TotalPages', (int) $max_pages );
+
+		return $response;
+	}
+
+	/**
+	 * Prepare the items for REST resopne
+	 * 
+	 * @param mixed 	$item 		WordPress repesentation for items
+	 * @param \WP_REST_Request $request request object
+	 * 
+	 * @return \WP_Error || WP_REST_Response
+	 */
+	public function prepare_item_for_response( $item, $request ) {
+		$data 	= [];
+		$fields = $this->get_fields_for_response( $request );
+
+		if( in_array( 'id', $fields, true ) ) {
+			$data['id'] = (int) $item->id;
+		}
+
+		if( in_array( 'name', $fields, true ) ) {
+			$data['name'] = $item->name;
+		}
+
+		if( in_array( 'address', $fields, true ) ) {
+			$data['address'] = $item->address;
+		}
+
+		if( in_array( 'phone', $fields, true ) ) {
+			$data['phone'] = $item->phone;
+		}
+
+		if( in_array( 'date', $fields, true ) ) {
+			$data['date'] = mysql_to_rfc3339( $item->created_at );
+		}
+
+		$context 	= ! empty( $request['context'] ) ? $request['context'] : 'view';
+		$data 		= $this->filter_response_by_context( $data, $context );
+
+		$response = rest_ensure_response( $data );
+		$response->add_links( $this->prepare_links( $item ) );
+
+		return $response;
+	}
+
+	/**
+	 * Prepare link for request
+	 * 
+	 * @param \WP_Post $post post object
+	 * 
+	 * @return array link for the given post
+	 */
+	public function prepare_links( $item ) {
+		$base = sprintf( '%s/%s', $this->namespace, $this->rest_base );
+
+		$links = [
+			'self'	=> [
+				'href' => rest_url( trailingslashit( $base ) . $item->id ),
+			],
+			'collection' => [
+				'href'	=> rest_url( $base ),
+			]
+		];
+
+		return $links;
 	}
 
 	/**
