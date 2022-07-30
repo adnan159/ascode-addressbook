@@ -57,6 +57,14 @@ class Addressbook extends WP_REST_Controller {
                     ],
                 ],
                 [
+                    'methods'             => WP_REST_Server::EDITABLE,
+                    'callback'            => [ $this, 'update_item' ],
+                    'permission_callback' => [ $this, 'update_item_permissions_check' ],
+                    'args'                => [
+                        'context' => $this->get_endpoint_args_for_item_schema( WP_REST_Server::EDITABLE ),
+                    ],
+                ],
+                [
                     'methods'             => WP_REST_Server::DELETABLE,
                     'callback'            => [ $this, 'delete_item' ],
                     'permission_callback' => [ $this, 'delete_item_permissions_check' ],
@@ -281,11 +289,11 @@ class Addressbook extends WP_REST_Controller {
 		$contact_id = ascode_insert_address( $contact );
 
 		if( is_wp_error( $contact_id ) ) {
-			$contact_id->add_data( ['data' => 400 ] );
+			$contact_id->add_data( ['status' => 400 ] );
 			return $contact_id;
 		}
 
-		$contact 	= ascode_get_address( $contact_id );
+		$contact 	= $this->get_contact( $contact_id );
 		$response 	= $this->prepare_item_for_response( $contact, $response );
 
 
@@ -293,6 +301,48 @@ class Addressbook extends WP_REST_Controller {
 		$response->header( 'Location', rest_url( sprintf( '%s/%s/%d', $this->namespace, $this->rest_base, $contact_id) ) );
 
 		return rest_ensure_response( $response );
+	}
+
+	/**
+	 * Checks if the the request has access to read contacts
+	 * 
+	 * @param \WP_REST_Request $request
+	 * 
+	 * @return boolean
+	 */
+	public function update_item_permissions_check( $request ) {
+		return $this->get_items_permissions_check( $request );
+	}
+
+
+	/**
+	 * Update one item form the collection
+	 * 
+	 * @param \WP_REST_Request $request
+	 * 
+	 * @return \WP_Error||boolean
+	 */
+	public function update_item( $request ) {
+		$contact = $this->get_contact( $request['id'] );
+		$prepared = $this->prepare_item_for_database( $request );
+
+		$prepared = array_merge( (array) $contact, $prepared );
+
+		$updated = ascode_insert_address( $prepared );
+
+		if( ! $updated ) {
+			return new WP_Error(
+				'rest_not_updated',
+				__( 'Sorry, the address could not be updated' ),
+				[ 'status' => 400 ],
+			);
+		}
+
+		$contact = $this->get_contact( $request['id'] );
+		$response = $this->prepare_item_for_response( $contact, $request );
+
+		return rest_ensure_response( $response );
+
 	}
 
 	/**
