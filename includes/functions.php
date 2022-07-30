@@ -138,7 +138,7 @@ function ascode_delete_address( $id ) {
 	global $wpdb;
 
 	return $wpdb->delete(
-		$wpdb . "ascode_addresses",
+		$wpdb->prefix . "ascode_addresses",
 		[ 'id'	=> $id ],
 		[ '%d' ]
 	);

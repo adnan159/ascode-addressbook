@@ -56,6 +56,11 @@ class Addressbook extends WP_REST_Controller {
                         'context' => $this->get_context_param( [ 'default' => 'view' ] ),
                     ],
                 ],
+                [
+                    'methods'             => WP_REST_Server::DELETABLE,
+                    'callback'            => [ $this, 'delete_item' ],
+                    'permission_callback' => [ $this, 'delete_item_permissions_check' ],
+                ],
 			]
 		 );
 	}
@@ -178,6 +183,50 @@ class Addressbook extends WP_REST_Controller {
 
 		return $response;	
 	}
+
+	/**
+	 * Checks if the the request has access to delete contacts
+	 * 
+	 * @param \WP_REST_Request $request
+	 * 
+	 * @return boolean
+	 */
+	public function delete_item_permissions_check( $request ) {
+		return $this->get_items_permissions_check( $request );
+	}
+
+
+	/**
+	 * Delete one item form collection
+	 * 
+	 * @param \WP_REST_Request $request
+	 * 
+	 * @return boolean
+	 */
+	public function delete_item( $request ) {
+		$contact  = $this->get_contact( $request['id'] );
+		$previous = $this->prepare_item_for_response( $contact, $request );
+
+		$deleted = ascode_delete_address( $request['id'] );
+
+		if( ! $deleted ) {
+			return WP_Error(
+				'rest_not_deleted',
+				__( 'Sorry, the address couldnot be deleted!'),
+				[ 'status' => 400 ],
+			);
+		}
+
+		$data = [
+			'deleted'	=> true,
+			'previous'	=> $previous->get_data(), 
+		];
+
+		$response = rest_ensure_response( $data );
+
+		return $data;
+	}
+
 
 	/**
 	 * Checks if the the request has access to read contacts
