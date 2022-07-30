@@ -4,6 +4,7 @@ namespace AsCode\Addressbook\API;
 
 use WP_REST_Controller;
 use WP_REST_Server;
+use WP_Error;
 
 
 /**
@@ -34,6 +35,27 @@ class Addressbook extends WP_REST_Controller {
 					'args'					=> $this->get_endpoint_args_for_item_schema( WP_REST_Server::CREATABLE ),
 				],
 				'schema' => [ $this, 'get_item_schema' ],
+			]
+		 );
+
+		register_rest_route( 
+			$this->namespace,
+			'/' . $this->rest_base . '/(?P<id>[\d]+)',
+			[
+				'args'   => [
+                    'id' => [
+                        'description' => __( 'Unique identifier for the object.' ),
+                        'type'        => 'integer',
+                    ],
+                ],
+                [
+                    'methods'             => WP_REST_Server::READABLE,
+                    'callback'            => [ $this, 'get_item' ],
+                    'permission_callback' => [ $this, 'get_item_permissions_check' ],
+                    'args'                => [
+                        'context' => $this->get_context_param( [ 'default' => 'view' ] ),
+                    ],
+                ],
 			]
 		 );
 	}
@@ -96,6 +118,65 @@ class Addressbook extends WP_REST_Controller {
 		$response->header( 'X-WP-TotalPages', (int) $max_pages );
 
 		return $response;
+	}
+
+	/**
+	 * Get the address if the id is valid
+	 * 
+	 * @param int $id Supplied ID
+	 * 
+	 * @return Object || WP_Error 
+	 */
+	protected function get_contact( $id ) {
+		$contact = ascode_get_address( $id );
+
+		if( ! $contact ) {
+			return new WP_Error(
+				'rest_contact_invalid_id',
+				__( 'Invalid Contact ID' ),
+				[ 'status' => 404 ]		
+			);
+		}
+
+		return $contact;
+	}
+
+	/**
+	 * Checks if the the request has access to read contacts
+	 * 
+	 * @param \WP_REST_Request $request
+	 * 
+	 * @return boolean
+	 */
+	public function get_item_permissions_check( $request ) {
+		if( ! current_user_can( 'manage_options' ) ) {
+			return false;
+		}
+
+		$contact = $this->get_contact( $request['id'] );
+
+		if( is_wp_error( $contact ) ) {
+			return $contact;
+		}
+
+		return true;
+	}
+
+
+	/**
+	 * Checks if the the request has access to read contacts
+	 * 
+	 * @param \WP_REST_Request $request
+	 * 
+	 * @return boolean
+	 */
+	public function get_item( $request ) {
+		$contact = $this->get_contact( $request['id'] );
+
+		$response = $this->prepare_item_for_response( $contact, $request );
+		$response = rest_ensure_response( $response );
+
+		return $response;	
 	}
 
 	/**
